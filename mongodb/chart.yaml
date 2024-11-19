@@ -1,0 +1,5 @@
+apiversion: v1 
+name: mongodb
+version: 0.0.1
+description: this is the customised helm chart for mongodb
+appVersion: v1

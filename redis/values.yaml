@@ -1,0 +1,2 @@
+StatefulSet:
+  replicas: 2

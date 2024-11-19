@@ -1,0 +1,41 @@
+apiversion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: roboshop
+  labels:                             # Metadata labels used for identifying and selecting this StatefulSet.
+    app: mongodb
+    project: roboshop
+    tier: db
+spec:
+  selector:
+    matchLabels:                      # Label selector to match pods managed by this StatefulSet.
+      app: mongodb
+      project: roboshop
+      tier: db
+  serviceName: "mongodb"              # The headless service name for stable network identity.
+  replicas: {{ .Values.statefulset.replicas }}    # Number of desired pod replicas, defined in values.yaml
+  template:                           # Pod template for the StatefulSet.
+    metadata:
+      labels:
+        app: mongodb
+        project: roboshop
+        tier: db
+    spec:
+      containers:
+      - name: mongodb                  # The name of the container in the pod.
+        image: "darauday0/mongodb:{{ .Values.statefulset.imageVersion }}"
+        volumeMounts: 
+        - name: mongodb
+          mountPath: /data/db
+  volumeClaimTemplates:               # Defines the PersistentVolumeClaims (PVCs) for each pod.
+  - metadata:
+      name: mongodb
+    spec:
+      accessModes: 
+      - ReadWriteOnce                 # Access mode, allowing one node to read/write at a time.
+      storageClassName: "ebs-sc"      # The storage class used for this PVC (e.g., Amazon EBS).
+      resources:
+        requests: 
+          storage: 1Gi                # Requested storage size
+

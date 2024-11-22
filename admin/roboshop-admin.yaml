@@ -1,0 +1,56 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: roboshop # The namespace where this role will be applied
+  name: roboshop-admin # Name of the role
+rules:
+- apiGroups: ["*"] # "*" allows access to all API groups, including core APIs
+  resources: ["*"] # "*" allows access to all resources like pods, services, etc.
+  verbs: ["*"] # "*" allows all actions like get, list, create, delete, etc.
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: roboshop-admin # Name of the role binding
+  namespace: roboshop # The namespace where this role binding is applied
+subjects:
+# A list of subjects (users, groups, or service accounts) to bind the role to
+- kind: User # Binding the role to a user
+  name: raheem # The exact username to bind the role to (case-sensitive)
+  apiGroup: rbac.authorization.k8s.io # Specifies that this is an RBAC resource
+roleRef:
+  kind: Role # Specifies the type of role to bind (Role or ClusterRole)
+  name: roboshop-admin # The name of the Role being bound (must match the Role's name)
+  apiGroup: rbac.authorization.k8s.io # Specifies that this is an RBAC resource
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-reader-roboshop-admin # Name of the ClusterRole (global, not namespaced)
+rules:
+- apiGroups: [""] # "" indicates the core API group (e.g., Secrets, PersistentVolumes)
+  resources: 
+    - "secrets" # Specifies access to secrets
+    - "persistentvolumes" # Specifies access to persistent volumes
+  verbs: 
+    - "get" # Allows reading the resource
+    - "watch" # Allows monitoring changes to the resource
+    - "list" # Allows listing all instances of the resource
+    - "create" # Allows creating the resource
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-reader-roboshop-admin # Name of the ClusterRoleBinding
+subjects:
+# A list of subjects (users, groups, or service accounts) to bind the ClusterRole to
+- kind: User # Binding the ClusterRole to a user
+  name: raheem # The exact username to bind the ClusterRole to (case-sensitive)
+  apiGroup: rbac.authorization.k8s.io # Specifies that this is an RBAC resource
+roleRef:
+  kind: ClusterRole # Specifies the type of role to bind (ClusterRole or Role)
+  name: cluster-reader-roboshop-admin # The name of the ClusterRole being bound (must match the ClusterRole's name)
+  apiGroup: rbac.authorization.k8s.io # Specifies that this is an RBAC resource
